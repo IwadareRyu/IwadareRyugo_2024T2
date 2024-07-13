@@ -1,17 +1,24 @@
 ﻿#include "stdafx.h"
 #include "Player.h"
 
-Player::Player() : m_currentSpeed(player::DEFAULT_SPEED),m_position(player::INIT_POS),m_isPlayerFacingRight(false){}
+Player::Player() : m_isPlayerFacingRight(false){
+	m_position = M_InitPosition();
+}
 
+Player::~Player() {}
 
+Vec2 Player::M_InitPosition(){
+	return player::INIT_POS;
+}
 
-void Player::M_PlayerInput(){
+void Player::M_PlayerInput(std::list<Bullet*>* bulletList){
 	if (KeyLeft.pressed() || KeyA.pressed()){
 		M_PlayerXMove(-1);
-		
+		m_isPlayerFacingRight = true;
 	}
 	else if (KeyRight.pressed() || KeyD.pressed()){
 		M_PlayerXMove(1);
+		m_isPlayerFacingRight = false;
 	}
 
 	if (KeyUp.pressed() || KeyW.pressed()){
@@ -21,36 +28,26 @@ void Player::M_PlayerInput(){
 		M_PlayerYMove(1);
 	}
 
-	if (KeySpace.pressed())
+	if (KeySpace.down())
 	{
-		M_PlayerShot();
+		M_PlayerShot(bulletList);
 	}
 }
 
 void Player::M_PlayerXMove(int minas){
 	m_position.x = m_position.x + minas * m_currentSpeed * Scene::DeltaTime();
-	if(minas < 0){
-		m_position.x = Max(m_position.x, player::MIN_POS.x);
-		m_isPlayerFacingRight = true;
-	}
-	else {
-		m_position.x = Min(m_position.x, player::MAX_POS.x);
-		m_isPlayerFacingRight = false;
-	}
+	M_MaxX();
 }
 
 void Player::M_PlayerYMove(int minas){
 	m_position.y = m_position.y + minas * m_currentSpeed * Scene::DeltaTime();
-	if (minas < 0) {
-		m_position.y = Max(m_position.y, player::MIN_POS.y);
-	}
-	else {
-		m_position.y = Min(m_position.y, player::MAX_POS.y);
-	}
+	M_MaxY();
 }
 
-void Player::M_PlayerShot(){
-
+void Player::M_PlayerShot(std::list<Bullet*>* bulletList){
+	Bullet* bullet = new Bullet();
+	bullet->M_SpawnInit(m_position, 200, 0, {0,-1});
+	bulletList->push_back(bullet);
 }
 
 void Player::M_PlayerLife(){

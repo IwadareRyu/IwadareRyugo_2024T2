@@ -1,13 +1,21 @@
 ﻿# include <Siv3D.hpp> // Siv3D v0.6.13
 #include "Player.h"
+#include "Bullet.h"
 
 void Main()
 {
 	const Texture PLAYER_TEXTURE{
 	U"example/Tiles/tile_0097.png"
 	};
+	const Texture BULLET_TEXTURE{ U"example/Tiles/tile_0103.png" };
+
+	Texture enemyTexture{
+		U"example/Tiles/tile_0121.png"
+	};
 
 	Player player;
+
+	std::list<Bullet*> bulletList;
 
 	const double SCALE = 2;
 
@@ -17,11 +25,27 @@ void Main()
 
 	while (System::Update())
 	{
-		player.M_PlayerInput();
+		player.M_PlayerInput(&bulletList);
 
 		player.M_PlayerDraw(SCALE);
 
-		FONT(U"俺たちの弾幕アクション！！！").drawAt(Scene::Width() / 2, Scene::Height() / 2);
+		enemyTexture.scaled(10).mirrored(false).drawAt(400,200);
+
+		//FONT(U"俺たちの弾幕アクション！！！").drawAt(Scene::Width() / 2, Scene::Height() / 2);
+
+		auto it = bulletList.begin();
+		for (; it != bulletList.end(); it++)
+		{
+			Bullet* bullet = *it;
+			bullet->M_Move();
+			bullet->M_Draw(BULLET_TEXTURE,SCALE,false);
+		}
+	}
+
+	auto it = bulletList.begin();
+	for (; it != bulletList.end(); it++)
+	{
+		delete* it;
 	}
 }
 
