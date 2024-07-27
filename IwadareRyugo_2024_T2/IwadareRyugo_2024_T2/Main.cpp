@@ -15,7 +15,9 @@ void Main()
 
 	Player player;
 
-	std::list<Bullet*> bulletList;
+	std::list<Bullet*> playerBulletList;
+
+	std::list<Bullet*> enemyBulletList;
 
 	const double SCALE = 2;
 
@@ -25,7 +27,7 @@ void Main()
 
 	while (System::Update())
 	{
-		player.M_PlayerInput(&bulletList);
+		player.M_PlayerInput(&playerBulletList);
 
 		player.M_PlayerDraw(SCALE);
 
@@ -33,17 +35,27 @@ void Main()
 
 		//FONT(U"俺たちの弾幕アクション！！！").drawAt(Scene::Width() / 2, Scene::Height() / 2);
 
-		auto it = bulletList.begin();
-		for (; it != bulletList.end(); it++)
+		auto it = playerBulletList.begin();
+		while (it != playerBulletList.end())
 		{
 			Bullet* bullet = *it;
-			bullet->M_Move();
-			bullet->M_Draw(BULLET_TEXTURE,SCALE,false);
+			auto lifeTime = bullet->M_LifeTime();
+			if (lifeTime <= 0)
+			{
+				it = playerBulletList.erase(it);
+				delete bullet;
+			}
+			else
+			{
+				bullet->M_Move();
+				bullet->M_Draw(BULLET_TEXTURE, SCALE, false);
+				it++;
+			}
 		}
 	}
 
-	auto it = bulletList.begin();
-	for (; it != bulletList.end(); it++)
+	auto it = playerBulletList.begin();
+	for (; it != playerBulletList.end(); it++)
 	{
 		delete* it;
 	}

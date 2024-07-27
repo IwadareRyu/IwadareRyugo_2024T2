@@ -24,16 +24,16 @@ public:
 
 	Vec2 M_InitPosition() override;
 
-	void M_PlayerInput(std::list<Bullet*>* bulletList);
+	const void M_PlayerInput(std::list<Bullet*>* bulletList);
 
-	void M_PlayerXMove(int minas);
+	const void M_PlayerXMove(const int minas);
 
-	void M_PlayerYMove(int minas);
+	const void M_PlayerYMove(const int minas);
 
-	void M_PlayerShot(std::list<Bullet*>* bulletList);
+	const void M_PlayerShot(std::list<Bullet*>* bulletList);
 
-	void M_PlayerLife();
+	const void M_PlayerLife();
 
-	void M_PlayerDraw(double scale);
+	const void M_PlayerDraw(const double scale);
 };
 
