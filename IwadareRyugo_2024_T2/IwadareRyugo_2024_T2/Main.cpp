@@ -1,6 +1,28 @@
 ﻿# include <Siv3D.hpp> // Siv3D v0.6.13
 #include "Player.h"
 #include "Bullet.h"
+#include "SpawnBullet.h"
+
+void LifeBullet(std::list<Bullet*>* bulletList,Texture texture,double scale)
+{
+	auto it = bulletList->begin();
+	while (it != bulletList->end())
+	{
+		Bullet* bullet = *it;
+		auto lifeTime = bullet->M_LifeTime();
+		if (lifeTime <= 0)
+		{
+			it = bulletList->erase(it);
+			delete bullet;
+		}
+		else
+		{
+			bullet->M_Move();
+			bullet->M_Draw(texture, scale, false);
+			it++;
+		}
+	}
+}
 
 void Main()
 {
@@ -19,6 +41,8 @@ void Main()
 
 	std::list<Bullet*> enemyBulletList;
 
+	SpawnBullet forwardSpawn(200,400);
+
 	const double SCALE = 2;
 
 	const Font FONT{ 40 };
@@ -33,25 +57,14 @@ void Main()
 
 		enemyTexture.scaled(10).mirrored(false).drawAt(400,200);
 
-		//FONT(U"俺たちの弾幕アクション！！！").drawAt(Scene::Width() / 2, Scene::Height() / 2);
+		forwardSpawn.M_CountTime();
 
-		auto it = playerBulletList.begin();
-		while (it != playerBulletList.end())
+		if (forwardSpawn._currentTime > spawnBullet::SPAWN_TIME)
 		{
-			Bullet* bullet = *it;
-			auto lifeTime = bullet->M_LifeTime();
-			if (lifeTime <= 0)
-			{
-				it = playerBulletList.erase(it);
-				delete bullet;
-			}
-			else
-			{
-				bullet->M_Move();
-				bullet->M_Draw(BULLET_TEXTURE, SCALE, false);
-				it++;
-			}
+			forwardSpawn.M_Spawn(SpawnType::ForwardSpawn);
 		}
+
+		LifeBullet(&playerBulletList, BULLET_TEXTURE, SCALE);
 	}
 
 	auto it = playerBulletList.begin();

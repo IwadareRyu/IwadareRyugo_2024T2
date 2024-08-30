@@ -19,7 +19,9 @@ const void Bullet::M_Move(){
 	m_position = m_position + m_dir * m_speed * Scene::DeltaTime();
 }
 
-const void Bullet::M_Rota(){}
+const void Bullet::M_Rota(){
+
+}
 
 const float Bullet::M_LifeTime() {
 	return m_life = m_life - Scene::DeltaTime();
