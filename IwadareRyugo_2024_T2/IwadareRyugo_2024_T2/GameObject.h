@@ -22,7 +22,7 @@ public:
 	~GameObject() {};
 	const void M_MaxX();
 	const void M_MaxY();
-	const void M_Draw(Texture texture, double scale, bool mirror);
+	const void M_Draw(Texture texture, double scale, bool mirror = false,float rota = 0);
 	virtual Vec2 M_InitPosition() { return gameObject::MIN_POS; };
 };
 

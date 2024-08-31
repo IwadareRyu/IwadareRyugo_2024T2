@@ -13,6 +13,6 @@ const void GameObject::M_MaxY() {
 	m_position.y = Min(m_position.y, gameObject::MAX_POS.y);
 }
 
-const void GameObject::M_Draw(const Texture texture, const double scale, const bool mirror = false){
-	texture.scaled(scale).mirrored(mirror).drawAt(m_position);
+const void GameObject::M_Draw(const Texture texture, const double scale, const bool mirror,float rota){
+	texture.scaled(scale).mirrored(mirror).rotated(rota).drawAt(m_position);
 }

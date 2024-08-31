@@ -18,11 +18,17 @@ void LifeBullet(std::list<Bullet*>* bulletList,Texture texture,double scale)
 		else
 		{
 			bullet->M_Move();
-			bullet->M_Draw(texture, scale, false);
+			bullet->M_Draw(texture, scale, false,bullet->m_rotaRange);
 			it++;
 		}
 	}
 }
+
+namespace MainSpace{
+	namespace Enemy {
+		const Vec2 INIT_POS{ 400,200 };
+	};
+};
 
 void Main()
 {
@@ -44,7 +50,7 @@ void Main()
 
 	std::list<Bullet*> enemyBulletList;
 
-	SpawnBullet forwardSpawn(200,400);
+	SpawnBullet spawnPoint(MainSpace::Enemy::INIT_POS.x,MainSpace::Enemy::INIT_POS.y,5);
 
 	const double SCALE = 2;
 
@@ -58,22 +64,32 @@ void Main()
 
 		player.M_PlayerDraw(SCALE);
 
-		enemyTexture.scaled(10).mirrored(false).drawAt(400,200);
+		enemyTexture.scaled(10).mirrored(false).drawAt(MainSpace::Enemy::INIT_POS);
 
-		forwardSpawn.M_CountTime();
+		spawnPoint.M_CountTime();
 
-		if (forwardSpawn._currentTime > spawnBullet::SPAWN_TIME)
+		if (spawnPoint._currentTime > spawnBullet::SPAWN_TIME)
 		{
-			forwardSpawn.M_Spawn(SpawnType::ForwardSpawn);
+			//spawnPoint.M_ForwardSpawn(&enemyBulletList);
+			//spawnPoint.M_CircleSpawn(&enemyBulletList, 30);
+			spawnPoint._currentTime = 0;
 		}
+		spawnPoint.M_WaveSpawn(&enemyBulletList, 30);
 
 		LifeBullet(&playerBulletList, BULLET_TEXTURE, SCALE);
+		LifeBullet(&enemyBulletList, BULLET_TEXTURE, SCALE);
 	}
 
-	auto it = playerBulletList.begin();
-	for (; it != playerBulletList.end(); it++)
+	auto itP = playerBulletList.begin();
+	for (; itP != playerBulletList.end(); itP++)
 	{
-		delete* it;
+		delete* itP;
+	}
+
+	auto itE = enemyBulletList.begin();
+	for (; itE != enemyBulletList.end(); itE++)
+	{
+		delete* itE;
 	}
 }
 
