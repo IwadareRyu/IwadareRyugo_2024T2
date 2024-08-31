@@ -10,8 +10,7 @@ Vec2 SpawnBullet::M_InitPosition() {
 }
 
 
-void SpawnBullet::M_Spawn(SpawnType type)
-{
+void SpawnBullet::M_Spawn(SpawnType type) {
 
 }
 

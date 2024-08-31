@@ -27,9 +27,12 @@ void LifeBullet(std::list<Bullet*>* bulletList,Texture texture,double scale)
 void Main()
 {
 	const Texture PLAYER_TEXTURE{
-	U"example/Tiles/tile_0097.png"
+	    U"example/Tiles/tile_0097.png"
 	};
-	const Texture BULLET_TEXTURE{ U"example/Tiles/tile_0103.png" };
+
+	const Texture BULLET_TEXTURE{
+		U"example/Tiles/tile_0103.png"
+	};
 
 	Texture enemyTexture{
 		U"example/Tiles/tile_0121.png"
