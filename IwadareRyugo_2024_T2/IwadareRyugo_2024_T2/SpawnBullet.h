@@ -9,7 +9,7 @@ namespace spawnBullet {
 	const int WAVE_COUNT = 10;
 };
 
-enum SpawnType
+enum class E_SpawnType
 {
 	ForwardSpawn,
 	CircleSpawn,

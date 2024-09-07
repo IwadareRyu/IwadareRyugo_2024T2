@@ -6,11 +6,12 @@ SpawnBullet::SpawnBullet(float x,float y,float offSetAngle){
 	m_offSetAngle = offSetAngle;
 }
 
+// スポーンポイントのの初期位置
 Vec2 SpawnBullet::M_InitPosition() {
 	return spawnBullet::INIT_POS;
 }
 
-
+// 没：スポーン方法の設定
 //void SpawnBullet::M_Spawn(SpawnType type, std::list<Bullet*>* bulletList,float disRota) {
 //	switch (type)
 //	{
@@ -26,26 +27,29 @@ Vec2 SpawnBullet::M_InitPosition() {
 //	}
 //}
 
+// Forward方向に跳ぶ弾の生成
 void SpawnBullet::M_ForwardSpawn(std::list<Bullet*>* bulletList, float speed)
 {
-	Bullet* bullet = new Bullet();
-	bullet->M_SpawnInit(m_position, speed, Math::ToRadians(180), {Math::Cos(Math::ToRadians(180 - 90)), Math::Sin(Math::ToRadians(180 - 90))
+	Bullet* p_bullet = new Bullet();
+	p_bullet->M_SpawnInit(m_position, speed, Math::ToRadians(180), {Math::Cos(Math::ToRadians(180 - 90)), Math::Sin(Math::ToRadians(180 - 90))
 });
-	bulletList->push_back(bullet);
+	bulletList->push_back(p_bullet);
 }
 
+// 円型に等間隔で飛ばす弾の生成
 void SpawnBullet::M_CircleSpawn(std::list<Bullet*>* bulletList,
 	float disRota, float speed)
 {
 	for (auto i = 0; i < 360; i+= disRota)
 	{
-		Bullet* bullet = new Bullet();
-		bullet->M_SpawnInit(m_position, 200, Math::ToRadians(i),
+		Bullet* p_bullet = new Bullet();
+		p_bullet->M_SpawnInit(m_position, 200, Math::ToRadians(i),
 			{ Math::Cos(Math::ToRadians(i - 90)),Math::Sin(Math::ToRadians(i - 90)) });
-		bulletList->push_back(bullet);
+		bulletList->push_back(p_bullet);
 	}
 }
 
+//波状の形を作る弾の生成
 void SpawnBullet::M_WaveSpawn(std::list<Bullet*>* bulletList,
 	float disRota, float speed)
 {
@@ -54,12 +58,12 @@ void SpawnBullet::M_WaveSpawn(std::list<Bullet*>* bulletList,
 	{
 		for (auto i = m_currentOffSetAngle; i < 360 + m_currentOffSetAngle; i += disRota)
 		{
-			Bullet* bullet = new Bullet();
-			bullet->M_SpawnInit(m_position, 200,
+			Bullet* p_bullet = new Bullet();
+			p_bullet->M_SpawnInit(m_position, 200,
 				Math::ToRadians(i),
 				{ Math::Cos(Math::ToRadians(i - 90)),
 				Math::Sin(Math::ToRadians(i - 90)) });
-			bulletList->push_back(bullet);
+			bulletList->push_back(p_bullet);
 			if (m_currentWaveCount >= spawnBullet::WAVE_COUNT)
 			{
 				m_currentWaveCount = 0;
@@ -73,6 +77,7 @@ void SpawnBullet::M_WaveSpawn(std::list<Bullet*>* bulletList,
 	}
 }
 
+// スポーンクールタイム
 float SpawnBullet::M_CountTime()
 {
 	m_currentTime += Scene::DeltaTime();

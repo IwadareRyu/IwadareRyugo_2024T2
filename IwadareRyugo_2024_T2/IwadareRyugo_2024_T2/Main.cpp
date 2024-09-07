@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "SpawnBullet.h"
 
+// 弾の残存時間を確認して、弾を描画したり削除するメソッド
 void LifeBullet(std::list<Bullet*>* bulletList,Texture texture,double scale)
 {
 	auto it = bulletList->begin();
@@ -24,6 +25,7 @@ void LifeBullet(std::list<Bullet*>* bulletList,Texture texture,double scale)
 	}
 }
 
+// Mainで使っている定数のnamespace
 namespace MainSpace{
 	namespace Enemy {
 		const Vec2 INIT_POS{ 400,200 };
@@ -44,7 +46,7 @@ void Main()
 		U"example/Tiles/tile_0103.png"
 	};
 
-	Texture enemyTexture{
+	const Texture ENEMY_TEXTURE{
 		U"example/Tiles/tile_0121.png"
 	};
 
@@ -95,7 +97,7 @@ void Main()
 			spawnPoint.M_WaveSpawn(&enemyBulletList, 30);
 		}
 
-		// 弾の生存時間確認して、弾を描画したり削除するメソッド
+		// 弾の残存時間を確認して、弾を描画したり削除するメソッド
 		LifeBullet(&playerBulletList, BULLET_TEXTURE, SCALE);
 		LifeBullet(&enemyBulletList, BULLET_TEXTURE, SCALE);
 
@@ -103,7 +105,7 @@ void Main()
 		player.M_PlayerDraw(SCALE);
 
 		//敵を描画
-		enemyTexture.scaled(10).mirrored(false).drawAt(MainSpace::Enemy::INIT_POS);
+		ENEMY_TEXTURE.scaled(10).mirrored(false).drawAt(MainSpace::Enemy::INIT_POS);
 
 	}
 
