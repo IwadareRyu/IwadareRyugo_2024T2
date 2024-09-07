@@ -5,7 +5,7 @@
 
 namespace player
 {
-	const int DEFAULT_SPEED = 200;
+	const int DEFAULT_SPEED = 300;
 
 	const Vec2 INIT_POS{ 400,400 };
 }

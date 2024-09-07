@@ -28,6 +28,10 @@ namespace MainSpace{
 	namespace Enemy {
 		const Vec2 INIT_POS{ 400,200 };
 	};
+	namespace SpawnPattern {
+		const int COUNT = 2;
+		const float CHANGE_TIME = 5.0f;
+	}
 };
 
 void Main()
@@ -50,7 +54,9 @@ void Main()
 
 	std::list<Bullet*> enemyBulletList;
 
-	SpawnBullet spawnPoint(MainSpace::Enemy::INIT_POS.x,MainSpace::Enemy::INIT_POS.y,5);
+	SpawnBullet spawnPoint(MainSpace::Enemy::INIT_POS.x,MainSpace::Enemy::INIT_POS.y,5.0f);
+	float patternChangeCount = 0.0f;
+	int patternNumber = 0;
 
 	const double SCALE = 2;
 
@@ -60,26 +66,48 @@ void Main()
 
 	while (System::Update())
 	{
+		//プレイヤーのインプットを確認し、移動や弾の発射をするメソッド
 		player.M_PlayerInput(&playerBulletList);
 
-		player.M_PlayerDraw(SCALE);
-
-		enemyTexture.scaled(10).mirrored(false).drawAt(MainSpace::Enemy::INIT_POS);
-
-		spawnPoint.M_CountTime();
-
-		if (spawnPoint._currentTime > spawnBullet::SPAWN_TIME)
+		// 時間に応じて弾幕パターンを切り替える
+		patternChangeCount += Scene::DeltaTime();
+		if (patternChangeCount > MainSpace::SpawnPattern::CHANGE_TIME)
 		{
-			//spawnPoint.M_ForwardSpawn(&enemyBulletList);
-			//spawnPoint.M_CircleSpawn(&enemyBulletList, 30);
-			spawnPoint._currentTime = 0;
+			patternNumber = (patternNumber + 1) % (MainSpace::SpawnPattern::COUNT);
+			patternChangeCount = 0.0f;
 		}
-		spawnPoint.M_WaveSpawn(&enemyBulletList, 30);
+		if (patternNumber == 0)
+		{
+			//スポーンクールタイム
+			spawnPoint.M_CountTime();
+			if (spawnPoint.m_currentTime > spawnBullet::SPAWN_TIME)
+			{
+				//真っ直ぐ弾を飛ばす
+				spawnPoint.M_ForwardSpawn(&enemyBulletList,400);
+				//等間隔で弾を飛ばす
+				spawnPoint.M_CircleSpawn(&enemyBulletList, 30);
+				spawnPoint.m_currentTime = 0;
+			}
+		}
+		else if(patternNumber == 1)
+		{
+			//波のように弾を飛ばす
+			spawnPoint.M_WaveSpawn(&enemyBulletList, 30);
+		}
 
+		// 弾の生存時間確認して、弾を描画したり削除するメソッド
 		LifeBullet(&playerBulletList, BULLET_TEXTURE, SCALE);
 		LifeBullet(&enemyBulletList, BULLET_TEXTURE, SCALE);
+
+		//プレイヤーの描画
+		player.M_PlayerDraw(SCALE);
+
+		//敵を描画
+		enemyTexture.scaled(10).mirrored(false).drawAt(MainSpace::Enemy::INIT_POS);
+
 	}
 
+	// 弾の開放処理
 	auto itP = playerBulletList.begin();
 	for (; itP != playerBulletList.end(); itP++)
 	{

@@ -3,7 +3,7 @@
 
 SpawnBullet::SpawnBullet(float x,float y,float offSetAngle){
 	m_position = { x, y };
-	_offSetAngle = offSetAngle;
+	m_offSetAngle = offSetAngle;
 }
 
 Vec2 SpawnBullet::M_InitPosition() {
@@ -26,16 +26,16 @@ Vec2 SpawnBullet::M_InitPosition() {
 //	}
 //}
 
-void SpawnBullet::M_ForwardSpawn(std::list<Bullet*>* bulletList)
+void SpawnBullet::M_ForwardSpawn(std::list<Bullet*>* bulletList, float speed)
 {
 	Bullet* bullet = new Bullet();
-	bullet->M_SpawnInit(m_position, 200, Math::ToRadians(180), {Math::Cos(Math::ToRadians(180 - 90)), Math::Sin(Math::ToRadians(180 - 90))
+	bullet->M_SpawnInit(m_position, speed, Math::ToRadians(180), {Math::Cos(Math::ToRadians(180 - 90)), Math::Sin(Math::ToRadians(180 - 90))
 });
 	bulletList->push_back(bullet);
 }
 
 void SpawnBullet::M_CircleSpawn(std::list<Bullet*>* bulletList,
-	float disRota)
+	float disRota, float speed)
 {
 	for (auto i = 0; i < 360; i+= disRota)
 	{
@@ -47,12 +47,12 @@ void SpawnBullet::M_CircleSpawn(std::list<Bullet*>* bulletList,
 }
 
 void SpawnBullet::M_WaveSpawn(std::list<Bullet*>* bulletList,
-	float disRota)
+	float disRota, float speed)
 {
-	_currentOffsetTime += Scene::DeltaTime();
-	if (_currentOffsetTime > spawnBullet::OFFSET_TIME)
+	m_currentOffsetTime += Scene::DeltaTime();
+	if (m_currentOffsetTime > spawnBullet::OFFSET_TIME)
 	{
-		for (auto i = _currentOffSetAngle; i < 360 + _currentOffSetAngle; i += disRota)
+		for (auto i = m_currentOffSetAngle; i < 360 + m_currentOffSetAngle; i += disRota)
 		{
 			Bullet* bullet = new Bullet();
 			bullet->M_SpawnInit(m_position, 200,
@@ -60,23 +60,22 @@ void SpawnBullet::M_WaveSpawn(std::list<Bullet*>* bulletList,
 				{ Math::Cos(Math::ToRadians(i - 90)),
 				Math::Sin(Math::ToRadians(i - 90)) });
 			bulletList->push_back(bullet);
-			_currentOffSetAngle += _offSetAngle;
-
-			_currentWaveCount++;
-			if (_currentWaveCount >= spawnBullet::WAVE_COUNT)
+			if (m_currentWaveCount >= spawnBullet::WAVE_COUNT)
 			{
-				_currentWaveCount = 0;
-				_offSetAngle = -_offSetAngle;
-				_currentOffSetAngle = 0;
+				m_currentWaveCount = 0;
+				m_offSetAngle = -m_offSetAngle;
+				m_currentOffSetAngle = 0;
 			}
 		}
-		_currentOffsetTime = 0;
+		m_currentOffSetAngle += m_offSetAngle;
+		m_currentWaveCount++;
+		m_currentOffsetTime = 0;
 	}
 }
 
 float SpawnBullet::M_CountTime()
 {
-	_currentTime += Scene::DeltaTime();
-	return _currentTime;
+	m_currentTime += Scene::DeltaTime();
+	return m_currentTime;
 }
 
